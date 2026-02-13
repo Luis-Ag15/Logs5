@@ -1,0 +1,142 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block title %}Scanner{% endblock %}
+{% block content %}
+
+<!-- CSS del scanner -->
+<link rel="stylesheet" href="{% static 'lectorqr/css/style_camara.css' %}">
+
+<style>
+  .card {
+    margin-bottom: 20px;
+    box-shadow: 0 0 1px rgba(0, 0, 0, .125), 0 1px 3px rgba(0, 0, 0, .2);
+  }
+
+  .card-header {
+    font-weight: bold;
+    text-align: center;
+    background-color: #f8f9fa;
+  }
+
+  .center-block {
+    float: none;
+    margin-left: auto;
+    margin-right: auto;
+  }
+</style>
+
+<div class="row">
+  <div class="col-md-12 center-block">
+
+    <div class="card">
+
+      <div class="card-header">
+        Escanea un código QR
+      </div>
+
+      <div class="card-body">
+
+        <div class="row">
+
+          <!-- CÁMARA -->
+          <div class="col-md-6">
+            <div class="contenedor_camara">
+
+              <div class="text-center" id="loadingMessage">
+                🎥 Asegúrese de habilitar la cámara web.
+              </div>
+
+              <canvas id="canvas" hidden></canvas>
+
+              <div id="output" hidden style="margin-bottom:20px;">
+                <div id="outputMessage">
+                  Aún no se ha detectado código QR
+                </div>
+
+                <div hidden>
+                  <b style="color:#eeeeee;">Código encontrado:</b>
+                  <span id="outputData" style="color:#eeeeee;"></span>
+                </div>
+
+                {% csrf_token %}
+              </div>
+
+            </div>
+          </div>
+
+          <!-- RESULTADO -->
+          <div class="col-md-6">
+            <div id="resultado"></div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- AUDIO -->
+<audio id="sonido_qr" style="display:none">
+  <source src="{% static 'lectorqr/sonido/beep.mp3' %}" type="audio/mpeg">
+</audio>
+
+<!-- LIBRERÍA QR -->
+<script src="{% static 'lectorqr/js/qr/jsQR.js' %}"></script>
+
+<!-- SCRIPT SCANNER -->
+<script src="{% static 'lectorqr/js/scanear_qr.js' %}"></script>
+
+<!-- AJAX -->
+<script>
+  function guardar_codigo_escaneado(result_qr) {
+
+    if (!result_qr) {
+      alert("Código vacío");
+      return;
+    }
+
+    var csrfToken = document.querySelector("[name=csrfmiddlewaretoken]").value;
+
+    $.ajax({
+      type: "POST",
+      url: "{% url 'view_detalles_paciente' %}",
+      data: {
+        datoqr: result_qr,
+        csrfmiddlewaretoken: csrfToken
+      },
+      dataType: "json",
+
+      success: function (response) {
+
+        if (!response || response.id_paciente === undefined) {
+          alert("Respuesta inválida del servidor");
+          return;
+        }
+
+        if (response.id_paciente === 0) {
+          alert("No se encontró ningún registro");
+          return;
+        }
+
+        window.location.href =
+          "{% url 'detalles_paciente' %}?id=" + response.id_paciente;
+      },
+
+      error: function (xhr, status, error) {
+        console.error("Error en la petición AJAX:", error);
+
+        if (xhr.status === 403) {
+          alert("🚫 Tu sesión ha caducado. Por favor, inicia sesión nuevamente.");
+          window.location.reload(); // Recarga para que Django redirija al login
+        } else {
+          alert(`⚠️ Error al procesar el código (${xhr.status}): ${error || "Error desconocido"}`);
+        }
+      }
+    });
+  }
+</script>
+
+{% endblock %}
+

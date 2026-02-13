@@ -1,0 +1,167 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <link rel="shortcut icon" type="image/png" href="{% static 'core/img/favicon.png' %}">
+  <title>{% block title %}{% endblock %}</title>
+
+  <!-- Fuentes -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway:400,400i,700,700i" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Lora:400,400i,700,700i" rel="stylesheet">
+
+  <!-- Bootstrap 4 -->
+  <link href="{% static 'core/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+  <link href="{% static 'core/vendor/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet">
+  <link href="{% static 'core/css/main.css' %}" rel="stylesheet">
+
+  <style>
+    html,
+    body {
+      height: 100%;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* CONTENIDO PRINCIPAL */
+    main.site-content {
+      flex: 1 0 auto;
+      margin-bottom: 3rem;
+    }
+
+    /* FOOTER */
+    footer.google-footer {
+      flex-shrink: 0;
+      background-color: #f2f2f2;
+      font-size: 14px;
+      color: #70757a;
+      border-top: 1px solid #dadce0;
+    }
+
+    .footer-country {
+      padding-bottom: 8px;
+      margin-bottom: 10px;
+      border-bottom: 1px solid #dadce0;
+
+      font-family: 'Raleway', sans-serif;
+      /* misma fuente */
+      font-weight: 500;
+      font-size: 16px;
+      color: #212529;
+      /* mismo tono de negro que Acceder */
+    }
+
+
+    /* Enlaces verdes */
+    footer.google-footer .footer-links a {
+      color: #2e7d32;
+      text-decoration: none;
+      margin-right: 15px;
+      font-family: 'Raleway', sans-serif;
+    }
+
+    footer.google-footer .footer-links a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ============ NAVBAR ============ -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+      <a class="navbar-brand" href="{% url 'home' %}">BQRV</a>
+
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarMain">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarMain">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'home' %}">Inicio</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'pages:pages' %}">Páginas</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'contact' %}">Contacto</a>
+          </li>
+
+          {% if request.user.is_staff or request.user.is_superuser %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'signup' %}">Registro</a>
+          </li>
+          <!-- Se asume que 'paciente_create' es el name en lectorqr/urls.py para 'resultados/' -->
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'paciente_create' %}">Resultados</a>
+          </li>
+          {% endif %}
+        </ul>
+
+        <ul class="navbar-nav">
+          {% if not request.user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'login' %}">Acceder</a>
+          </li>
+
+          {% else %}
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">
+              {{ request.user.username }}
+            </a>
+            <div class="dropdown-menu dropdown-menu-right">
+              <a class="dropdown-item" href="{% url 'profile' %}">Perfil</a>
+              <a class="dropdown-item" href="{% url 'scanner' %}">Scanner</a>
+              <div class="dropdown-divider"></div>
+              <form method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button class="dropdown-item" type="submit">Salir</button>
+              </form>
+            </div>
+          </li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ============ CONTENIDO ============ -->
+  <main class="site-content">
+    <div class="container mt-4">
+      {% block content %}{% endblock %}
+    </div>
+  </main>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="google-footer py-3">
+    <div class="container">
+      <div class="footer-country">
+        México
+      </div>
+
+      <div class="d-flex flex-wrap footer-links">
+        <a href="#">Sobre BQRV</a>
+        <a href="#">Cómo funciona</a>
+        <a href="#">Privacidad</a>
+        <a href="#">Condiciones</a>
+        <a href="#">Configuración</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- JS -->
+  <script src="{% static 'core/vendor/jquery/jquery.min.js' %}"></script>
+  <script src="{% static 'core/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'core/js/main.js' %}"></script>
+
+</body>
+
+</html>

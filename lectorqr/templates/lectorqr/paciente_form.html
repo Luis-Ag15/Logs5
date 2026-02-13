@@ -1,0 +1,236 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Registro Resultados Paciente{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card border-0 shadow-lg overflow-hidden">
+                <div class="card-header bg-success bg-gradient text-white p-4 border-0">
+                    <h3 class="card-title mb-0"><i class="fas fa-user-md me-2"></i> Registro de Resultados</h3>
+                    <small class="opacity-75">Complete la información del expediente clínico</small>
+                </div>
+
+                <div class="card-body p-0"> {# 🔹 MENSAJES DE DJANGO #}
+                    <div id="django-messages" class="px-4 pt-3">
+                        {% if messages %}
+                            {% for message in messages %}
+                            <div class="alert alert-{{ message.tags|default:'success' }} alert-dismissible fade show shadow-sm" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+
+                    <form id="formResultados" method="post" enctype="multipart/form-data" class="p-4">
+                        {% csrf_token %}
+
+                        {% if form.errors %}
+                        <div class="alert alert-danger shadow-sm alert-errors mx-2">
+                            <i class="fas fa-exclamation-triangle me-2"></i> <strong>Error:</strong> Por favor revise los campos marcados.
+                        </div>
+                        {% endif %}
+
+                        <div class="section-frame mb-4">
+                            <h5 class="section-title">
+                                <i class="fas fa-id-card me-2"></i>Información del Paciente
+                            </h5>
+                            <div class="row g-3"> <div class="col-md-3">
+                                    <label class="form-label fw-bold small text-uppercase text-muted">{{ form.id.label }}</label>
+                                    {{ form.id }}
+                                </div>
+                                <div class="col-md-9">
+                                    <label class="form-label fw-bold small text-uppercase text-muted">{{ form.nombre.label }}</label>
+                                    {{ form.nombre }}
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-bold small text-uppercase text-muted">{{ form.edad.label }}</label>
+                                    {{ form.edad }}
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-bold small text-uppercase text-muted">{{ form.sexo.label }}</label>
+                                    {{ form.sexo }}
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-bold small text-uppercase text-muted">{{ form.telefono.label }}</label>
+                                    {{ form.telefono }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="section-frame mb-4">
+                            <h5 class="section-title">
+                                <i class="fas fa-file-medical-alt me-2"></i>Detalles Clínicos
+                            </h5>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold small text-uppercase text-muted">{{ form.fecha_de_registro.label }}</label>
+                                    {{ form.fecha_de_registro }}
+                                </div>
+
+                                <div class="col-12">
+                                    <label class="form-label fw-bold small text-uppercase text-muted">{{ form.datos_medico.label }}</label>
+                                    {{ form.datos_medico }}
+                                </div>
+
+                                <div class="col-12">
+                                    <label class="form-label fw-bold small text-uppercase text-muted">{{ form.informacion_clinica.label }}</label>
+                                    {{ form.informacion_clinica }}
+                                </div>
+
+                                <div class="col-12">
+                                    <label class="form-label fw-bold small text-uppercase text-muted">{{ form.resultado_prueba.label }}</label>
+                                    <div class="p-3 bg-white rounded border border-success-subtle shadow-sm">
+                                        {{ form.resultado_prueba }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="section-frame mb-5">
+                            <h5 class="section-title">
+                                <i class="fas fa-camera me-2"></i>Documentación Visual
+                            </h5>
+                            <div class="row g-4">
+                                <div class="col-md-6 text-center border-md-end">
+                                    <label class="form-label fw-bold d-block text-muted">{{ form.foto_perfil.label }}</label>
+                                    <div class="preview-box bg-white rounded mb-3">
+                                        <img id="preview_foto_perfil" src="" class="img-fluid rounded d-none" style="height: 200px; width: 100%; object-fit: cover;">
+                                        <div id="placeholder_perfil" class="py-5 text-secondary opacity-50">
+                                            <i class="fas fa-user-circle fa-4x"></i>
+                                            <p class="mt-2 small">Vista previa de perfil</p>
+                                        </div>
+                                    </div>
+                                    {{ form.foto_perfil }}
+                                </div>
+                                <div class="col-md-6 text-center mt-4 mt-md-0">
+                                    <label class="form-label fw-bold d-block text-muted">{{ form.foto_resultado.label }}</label>
+                                    <div class="preview-box bg-white rounded mb-3">
+                                        <img id="preview_foto_resultado" src="" class="img-fluid rounded d-none" style="height: 200px; width: 100%; object-fit: cover;">
+                                        <div id="placeholder_resultado" class="py-5 text-secondary opacity-50">
+                                            <i class="fas fa-file-invoice fa-4x"></i>
+                                            <p class="mt-2 small">Vista previa de prueba</p>
+                                        </div>
+                                    </div>
+                                    {{ form.foto_resultado }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex flex-column flex-md-row justify-content-between gap-3 mt-4">
+                            <button type="submit" class="btn btn-success btn-lg px-5 py-3 shadow order-1 order-md-0">
+                                <i class="fas fa-save me-2"></i>Guardar Resultados
+                            </button>
+
+                            <button type="button" class="btn btn-outline-dark btn-lg px-5 py-3 order-0 order-md-1" id="btnLimpiar">
+                                <i class="fas fa-trash-alt me-2"></i>Borrar Formulario
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Ajuste para que el contenido use el ancho total */
+    .section-frame {
+        background-color: #fcfcfc;
+        border: 1px solid #eee;
+        border-radius: 8px;
+        padding: 20px;
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    .section-title {
+        color: #198754;
+        font-weight: 700;
+        font-size: 1.1rem;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+    }
+
+    /* Forzar que los inputs ocupen todo el ancho del contenedor */
+    input, select, textarea {
+        display: block;
+        width: 100% !important;
+        padding: 0.75rem;
+        font-size: 1rem;
+        color: #333;
+        background-color: #fff;
+        border: 1px solid #ced4da;
+        border-radius: 6px;
+        box-sizing: border-box; /* Asegura que padding no sume al ancho */
+    }
+
+    input:focus, select:focus, textarea:focus {
+        border-color: #198754;
+        outline: 0;
+        box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.1);
+    }
+
+    .preview-box {
+        border: 2px dashed #ddd;
+        min-height: 200px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    @media (min-width: 768px) {
+        .btn-lg { min-width: 280px; }
+    }
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const form = document.getElementById("formResultados");
+        const btnLimpiar = document.getElementById("btnLimpiar");
+
+        function mostrarPreview(input, previewId, placeholderId) {
+            const preview = document.getElementById(previewId);
+            const placeholder = document.getElementById(placeholderId);
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    preview.src = e.target.result;
+                    preview.classList.remove("d-none");
+                    placeholder.classList.add("d-none");
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        const inputPerfil = document.querySelector('input[name="foto_perfil"]');
+        const inputResultado = document.querySelector('input[name="foto_resultado"]');
+
+        if (inputPerfil) inputPerfil.addEventListener("change", () => mostrarPreview(inputPerfil, "preview_foto_perfil", "placeholder_perfil"));
+        if (inputResultado) inputResultado.addEventListener("change", () => mostrarPreview(inputResultado, "preview_foto_resultado", "placeholder_resultado"));
+
+        btnLimpiar.addEventListener("click", function () {
+            if (confirm("¿Seguro que deseas borrar todo el progreso?")) {
+                form.reset();
+                ["preview_foto_perfil", "preview_foto_resultado"].forEach(id => {
+                    const img = document.getElementById(id);
+                    img.src = "";
+                    img.classList.add("d-none");
+                });
+                ["placeholder_perfil", "placeholder_resultado"].forEach(id => {
+                    document.getElementById(id).classList.remove("d-none");
+                });
+                document.querySelectorAll('.alert').forEach(a => a.remove());
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        });
+    });
+</script>
+{% endblock %}
+

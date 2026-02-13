@@ -1,0 +1,205 @@
+{% extends 'core/base.html' %}
+{% block title %}Registro{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card border-0 shadow-lg overflow-hidden">
+
+        <div class="card-header bg-success bg-gradient text-white p-4 border-0">
+          <h3 class="card-title mb-0 text-center"><i class="fas fa-user-plus me-2"></i> Registro de Usuario</h3>
+          <small class="opacity-75 d-block text-center">Cree una nueva cuenta en el sistema</small>
+        </div>
+
+        <div class="card-body p-0">
+
+          {# 🔹 MENSAJES Y ERRORES #}
+          <div class="px-4 pt-3">
+            {% if success %}
+            <div class="alert alert-success text-center shadow-sm">
+              <i class="fas fa-check-circle me-2"></i> Usuario registrado correctamente
+            </div>
+            {% endif %}
+
+            {% if form.non_field_errors %}
+            <div class="alert alert-danger shadow-sm">
+              <i class="fas fa-exclamation-triangle me-2"></i> {{ form.non_field_errors }}
+            </div>
+            {% endif %}
+          </div>
+
+          <form method="post" class="p-4" id="formRegistro">
+            {% csrf_token %}
+
+            <div class="section-frame mb-4">
+              <h5 class="section-title">
+                <i class="fas fa-id-badge me-2"></i> Credenciales de Acceso
+              </h5>
+              <div class="row g-3">
+
+                <div class="col-12 mb-2">
+                  <label class="form-label fw-bold small text-uppercase text-muted">{{ form.last_name.label }}</label>
+                  <div class="input-group">
+                    {{ form.last_name }}
+                    <button class="btn btn-dark" type="button" onclick="copiarCodigo()" title="Copiar código">
+                      <i class="fas fa-copy"></i>
+                    </button>
+                  </div>
+                  <div id="copyMsg" class="badge bg-success mt-1 d-none animated fadeIn">
+                    ¡Código copiado!
+                  </div>
+                  {% if form.last_name.errors %}<div class="text-danger small">{{ form.last_name.errors }}</div>{% endif %}
+                </div>
+
+                <div class="col-md-6">
+                  <label class="form-label fw-bold small text-uppercase text-muted">{{ form.username.label }}</label>
+                  {{ form.username }}
+                  {% if form.username.errors %}<div class="text-danger small">{{ form.username.errors }}</div>{% endif %}
+                </div>
+
+                <div class="col-md-6">
+                  <label class="form-label fw-bold small text-uppercase text-muted">{{ form.email.label }}</label>
+                  {{ form.email }}
+                  {% if form.email.errors %}<div class="text-danger small">{{ form.email.errors }}</div>{% endif %}
+                </div>
+              </div>
+            </div>
+
+            <div class="section-frame mb-4">
+              <h5 class="section-title">
+                <i class="fas fa-lock me-2"></i> Datos Personales y Seguridad
+              </h5>
+              <div class="row g-3">
+                <div class="col-12">
+                  <label class="form-label fw-bold small text-uppercase text-muted">{{ form.first_name.label }}</label>
+                  {{ form.first_name }}
+                  {% if form.first_name.errors %}<div class="text-danger small">{{ form.first_name.errors }}</div>{% endif %}
+                </div>
+
+                <div class="col-md-6">
+                  <label class="form-label fw-bold small text-uppercase text-muted">{{ form.password1.label }}</label>
+                  {{ form.password1 }}
+                  {% if form.password1.errors %}<div class="text-danger small">{{ form.password1.errors }}</div>{% endif %}
+                </div>
+
+                <div class="col-md-6">
+                  <label class="form-label fw-bold small text-uppercase text-muted">{{ form.password2.label }}</label>
+                  {{ form.password2 }}
+                  {% if form.password2.errors %}<div class="text-danger small">{{ form.password2.errors }}</div>{% endif %}
+                </div>
+              </div>
+            </div>
+
+            <div class="d-flex flex-column flex-md-row justify-content-between gap-3 mt-4">
+              <button type="submit" class="btn btn-success btn-lg px-5 py-3 shadow order-1 order-md-0">
+                <i class="fas fa-check-circle me-2"></i>Confirmar Registro
+              </button>
+
+              <button type="button" class="btn btn-outline-dark btn-lg px-5 py-3 order-0 order-md-1" id="btnLimpiar">
+                <i class="fas fa-eraser me-2"></i>Limpiar Campos
+              </button>
+            </div>
+
+          </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Estilo unificado de Marcos */
+  .section-frame {
+    background-color: #fcfcfc;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 20px;
+  }
+
+  .section-title {
+    color: #198754;
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+  }
+
+  /* Inputs de ancho total y estilo unificado */
+  input, select {
+    display: block;
+    width: 100% !important;
+    padding: 0.75rem;
+    font-size: 1rem;
+    color: #333;
+    background-color: #fff;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    box-sizing: border-box;
+    transition: all 0.2s ease;
+  }
+
+  input:focus {
+    border-color: #198754;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.1);
+    background-color: #f8fff9;
+  }
+
+  @media (min-width: 768px) {
+    .btn-lg { min-width: 250px; }
+  }
+
+  .animated { animation-duration: 0.5s; animation-fill-mode: both; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .fadeIn { animation-name: fadeIn; }
+</style>
+
+<script>
+  /* Copiar código mejorado */
+  function copiarCodigo() {
+    // Buscamos el input de last_name (que asumo es el código)
+    const input = document.querySelector('input[name="last_name"]');
+    const msg = document.getElementById("copyMsg");
+
+    if (!input || !input.value) {
+      alert("No hay código para copiar");
+      return;
+    }
+
+    navigator.clipboard.writeText(input.value).then(() => {
+      msg.classList.remove("d-none");
+      setTimeout(() => msg.classList.add("d-none"), 2500);
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const usernameInput = document.getElementById("id_username");
+    const emailInput = document.getElementById("id_email");
+    const btnLimpiar = document.getElementById("btnLimpiar");
+    const form = document.getElementById("formRegistro");
+
+    // Username y Email siempre en minúsculas
+    [usernameInput, emailInput].forEach(el => {
+      if (el) {
+        el.addEventListener("input", function () {
+          this.value = this.value.toLowerCase().replace(/\s/g, '');
+        });
+      }
+    });
+
+    // Botón Limpiar con scroll arriba
+    btnLimpiar.addEventListener("click", function () {
+      if (confirm("¿Deseas limpiar todos los campos?")) {
+        form.reset();
+        document.querySelectorAll('.alert').forEach(a => a.remove());
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    });
+  });
+</script>
+{% endblock %}

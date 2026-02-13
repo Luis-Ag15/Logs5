@@ -1,0 +1,156 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block title %}Resultados{% endblock %}
+
+{% block content %}
+
+<script>
+  setTimeout(function () {
+    window.location.href = "{% url 'home' %}";
+  }, 30000);
+</script>
+
+<style>
+  .card-resultados {
+    border-radius: 18px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    padding: 30px;
+    background-color: #ffffff;
+  }
+
+  /* FOTO PERFIL CENTRADA */
+  .perfil-img {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid #e9ecef;
+    display: block;
+    margin: 0 auto 15px;
+  }
+
+  .fecha {
+    font-size: 14px;
+    color: #6c757d;
+  }
+
+  /* RECUADRO DE TEXTO ESTILO CLÍNICO */
+  .texto-box {
+    background: linear-gradient(135deg, #f8fbff, #eef3ff);
+    border: 1px solid #d6e0ff;
+    border-radius: 14px;
+    padding: 18px 22px;
+    margin-top: 22px;
+    text-align: left;
+  }
+
+  .texto-header {
+    display: flex;
+    align-items: center;
+    color: #007bff;
+    font-weight: 600;
+    font-size: 13px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+  }
+
+  .texto-header i {
+    margin-right: 8px;
+    font-size: 16px;
+  }
+
+  .texto-box p {
+    margin: 0;
+    font-size: 15px;
+    color: #2f3a4a;
+    line-height: 1.6;
+  }
+
+  /* FOTO RESULTADO */
+  .resultado-img {
+    width: 100%;
+    max-width: 520px;
+    height: 220px;
+    border-radius: 14px;
+    object-fit: cover;
+    margin: 25px auto 0;
+    display: block;
+  }
+
+  .mensaje-redirect {
+    margin-top: 25px;
+    font-size: 13px;
+    color: #6c757d;
+  }
+</style>
+
+<div class="row justify-content-center">
+  <div class="col-lg-6 col-md-8">
+
+    <div class="card card-resultados text-center">
+
+      <h3 class="mb-3">Resultados</h3>
+      <hr>
+
+      {# ================= FOTO PERFIL ================= #}
+      {% if paciente.foto_perfil %}
+      <img src="{{ paciente.foto_perfil.url }}" alt="Foto de perfil" class="perfil-img">
+      {% else %}
+      <img src="{% static 'img/default-profile.png' %}" alt="Sin foto de perfil" class="perfil-img">
+      {% endif %}
+
+      {# ================= NOMBRE ================= #}
+      <h4 class="mt-2">{{ paciente.nombre }}</h4>
+
+      {# ================= FECHA REGISTRO ================= #}
+      <div class="fecha">
+        Registrado el {{ paciente.fecha_de_registro }}
+      </div>
+
+      {# ================= DATOS DEL MÉDICO ================= #}
+      <div class="texto-box">
+        <div class="texto-header">
+          <i class="fa fa-user-md"></i>
+          Datos del médico
+        </div>
+        <p>{{ paciente.datos_medico }}</p>
+      </div>
+
+      {# ================= INFORMACIÓN CLÍNICA ================= #}
+      <div class="texto-box">
+        <div class="texto-header">
+          <i class="fa fa-file-text-o"></i>
+          Información clínica
+        </div>
+        <p>{{ paciente.informacion_clinica }}</p>
+      </div>
+
+      {# ================= RESULTADO DE LA PRUEBA ================= #}
+      <div class="texto-box">
+        <div class="texto-header">
+          <i class="fa fa-flask"></i>
+          Resultado de la prueba
+        </div>
+        <p>{{ paciente.resultado_prueba }}</p>
+      </div>
+
+      {# ================= FOTO RESULTADO ================= #}
+      {% if paciente.foto_resultado %}
+      <img src="{{ paciente.foto_resultado.url }}" alt="Resultado" class="resultado-img">
+      {% else %}
+      <p class="text-muted mt-4">
+        No hay imagen de resultado disponible.
+      </p>
+      {% endif %}
+
+      <p class="mensaje-redirect">
+        Serás redirigido automáticamente al inicio en 30 segundos.
+      </p>
+
+    </div>
+
+  </div>
+</div>
+
+{% endblock %}

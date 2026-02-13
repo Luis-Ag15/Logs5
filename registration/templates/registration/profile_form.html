@@ -1,0 +1,207 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block title %}Perfil{% endblock %}
+
+{% block content %}
+
+<link rel="stylesheet"
+      href="https://unpkg.com/cropperjs@1.6.1/dist/cropper.min.css">
+
+<style>
+  .errorlist {
+    color: red;
+  }
+
+  /* OCULTAR TEXTOS (LABELS) */
+  label {
+    display: none;
+  }
+
+  .avatar {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .preview-container {
+    max-width: 300px;
+    max-height: 300px;
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+
+  .cropper-container {
+    max-width: 100% !important;
+  }
+
+  .cropper-view-box,
+  .cropper-face {
+    border-radius: 50%;
+  }
+</style>
+
+<main role="main">
+  <div class="container">
+    <div class="row mt-4">
+      <div class="col-md-9 mx-auto mb-5">
+
+        <form method="post"
+              enctype="multipart/form-data"
+              id="profileForm">
+
+          {% csrf_token %}
+
+          <div class="row">
+
+            <!-- AVATAR -->
+            <div class="col-md-3 text-center">
+              <img id="avatarPreview"
+                   src="{% if request.user.profile.avatar %}
+                          {{ request.user.profile.avatar.url }}
+                        {% else %}
+                          {% static 'registration/img/no-avatar.jpg' %}
+                        {% endif %}"
+                   class="avatar img-fluid mb-2">
+            </div>
+
+            <!-- FORMULARIO -->
+            <div class="col-md-9">
+
+              <h3 class="mb-3">Perfil</h3>
+
+              <input type="file"
+                     name="avatar"
+                     id="id_avatar"
+                     class="form-control-file mb-3"
+                     accept="image/*">
+
+              <div class="preview-container d-none"
+                   id="cropContainer">
+                <img id="cropImage" class="img-fluid">
+              </div>
+
+              {{ form.bio }}
+
+              <!-- NOMBRE -->
+              <input type="text"
+                     class="form-control mt-3"
+                     value="{{ request.user.first_name }}"
+                     readonly>
+
+              <!-- USUARIO -->
+              <input type="text"
+                     class="form-control mt-3"
+                     value="{{ request.user.username }}"
+                     readonly>
+
+              <small>
+                <a href="{% url 'profile_username' %}">
+                  Editar usuario
+                </a>
+              </small>
+
+              <!-- EMAIL -->
+              <input type="email"
+                     class="form-control mt-3"
+                     value="{{ request.user.email }}"
+                     readonly>
+
+              <small>
+                <a href="{% url 'profile_email' %}">
+                  Cambiar email
+                </a>
+              </small>
+
+              <div class="row mt-3">
+                <div class="col-md-8">
+                  <!-- APELLIDO -->
+                  <input type="text"
+                         class="form-control"
+                         value="{{ request.user.last_name }}"
+                         readonly>
+                </div>
+
+                <div class="col-md-4">
+                  <button type="submit"
+                          class="btn btn-outline-primary btn-block"
+                          formaction="{% url 'profile_qr' %}">
+                    Ver QR
+                  </button>
+                </div>
+              </div>
+
+              <p class="mt-3">
+                <a href="{% url 'password_change' %}">
+                  Cambiar contraseña
+                </a>
+              </p>
+
+              <button type="submit"
+                      class="btn btn-primary btn-block">
+                Actualizar
+              </button>
+
+            </div>
+          </div>
+        </form>
+
+      </div>
+    </div>
+  </div>
+</main>
+
+<script src="https://unpkg.com/cropperjs@1.6.1/dist/cropper.min.js"></script>
+
+<script>
+  let cropper;
+  const input = document.getElementById('id_avatar');
+  const cropImage = document.getElementById('cropImage');
+  const cropContainer = document.getElementById('cropContainer');
+  const form = document.getElementById('profileForm');
+  const avatarPreview = document.getElementById('avatarPreview');
+
+  input.addEventListener('change', e => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      cropImage.src = reader.result;
+      cropContainer.classList.remove('d-none');
+
+      if (cropper) cropper.destroy();
+
+      cropper = new Cropper(cropImage, {
+        aspectRatio: 1,
+        viewMode: 1,
+        autoCropArea: 1,
+        dragMode: 'move',
+        zoomable: true,
+        background: false
+      });
+    };
+    reader.readAsDataURL(file);
+  });
+
+  form.addEventListener('submit', e => {
+    if (!cropper) return;
+
+    e.preventDefault();
+
+    cropper.getCroppedCanvas({
+      width: 300,
+      height: 300
+    }).toBlob(blob => {
+      avatarPreview.src = URL.createObjectURL(blob);
+
+      const dt = new DataTransfer();
+      dt.items.add(new File([blob], 'avatar.jpg', { type: 'image/jpeg' }));
+      input.files = dt.files;
+
+      form.submit();
+    });
+  });
+</script>
+
+{% endblock %}

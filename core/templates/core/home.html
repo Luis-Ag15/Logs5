@@ -1,0 +1,92 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block title %}Inicio{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+
+  <!-- HERO -->
+  <div class="text-center mb-5">
+    <h2 class="fw-bold">
+      Accede y comparte tu información de forma simple y segura
+    </h2>
+    <p class="lead text-muted">
+      Consulta y comparte tus datos mediante códigos QR, manteniendo siempre
+      el control sobre tu información.
+    </p>
+  </div>
+
+  <!-- SECCIÓN QR -->
+  <div class="row align-items-center mb-5">
+
+    <!-- IMAGEN -->
+    <div class="col-md-6 text-center mb-4 mb-md-0">
+      <img src="{% static 'core/img/qr_info.jpg' %}"
+           alt="Cómo escanear un código QR"
+           class="img-fluid rounded shadow">
+    </div>
+
+    <!-- TEXTO -->
+    <div class="col-md-6">
+      <h3 class="fw-bold text-success mb-3">
+        ¿Cómo funciona?
+      </h3>
+
+      <p class="text-muted">
+        Escanea el código QR para acceder de manera inmediata a la información
+        que el usuario ha decidido compartir.
+      </p>
+
+      <ul class="list-unstyled">
+        <li>✔ Acceso rápido sin registros adicionales</li>
+        <li>✔ Información protegida</li>
+        <li>✔ Control total del usuario</li>
+      </ul>
+
+      <p class="fw-semibold text-success mt-3">
+        Tus datos están protegidos y solo tú decides con quién compartirlos.
+      </p>
+    </div>
+
+  </div>
+
+  <!-- BLOQUES INFORMATIVOS -->
+  <div class="row g-4">
+
+    <div class="col-md-4">
+      <div class="card h-100 shadow-sm text-center">
+        <div class="card-body">
+          <h4 class="card-title text-success">🔐 Privacidad</h4>
+          <p class="card-text">
+            Tus datos no se comparten sin tu autorización.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card h-100 shadow-sm text-center">
+        <div class="card-body">
+          <h4 class="card-title text-success">⚡ Rapidez</h4>
+          <p class="card-text">
+            Acceso inmediato a la información cuando más se necesita.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card h-100 shadow-sm text-center">
+        <div class="card-body">
+          <h4 class="card-title text-success">📱 Simplicidad</h4>
+          <p class="card-text">
+            Diseñado para ser usado desde cualquier dispositivo.
+          </p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+{% endblock %}
